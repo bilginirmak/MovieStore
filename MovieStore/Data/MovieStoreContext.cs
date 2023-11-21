@@ -18,5 +18,6 @@ namespace MovieStore.Data
         public DbSet<MovieStore.Models.User> User { get; set; } = default!;
         public DbSet<MovieStore.Models.Movie> Movie { get; set; } = default!;
         public DbSet<MovieStore.Models.Cart> Cart { get; set; } = default!;
+        public DbSet<MovieStore.Models.Cart> Item { get; set; } = default!;
     }
 }

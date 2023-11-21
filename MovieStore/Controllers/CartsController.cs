@@ -21,6 +21,8 @@ namespace MovieStore.Controllers
             _context = context;
         }
 
+
+
         // GET: Carts
         public async Task<IActionResult> Index()
         {
