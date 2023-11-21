@@ -3,11 +3,14 @@ using Microsoft.Extensions.DependencyInjection;
 using MovieStore.Data;
 using Microsoft.AspNetCore.Identity;
 using MovieStore.Models;
+
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddDbContext<MovieStoreContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("MovieStoreContext") ?? throw new InvalidOperationException("Connection string 'MovieStoreContext' not found.")));
 
-builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = true).AddEntityFrameworkStores<MovieStoreContext>();
+builder.Services.AddDefaultIdentity<IdentityUser>(options => options.SignIn.RequireConfirmedAccount = false)
+    .AddRoles<IdentityRole>()
+    .AddEntityFrameworkStores<MovieStoreContext>();
 
 // Add services to the container.
 
@@ -41,4 +44,44 @@ app.MapControllerRoute(
     name: "default",
     pattern: "{controller=Home}/{action=Index}/{id?}");
 app.MapRazorPages();
+
+using (var scope = app.Services.CreateScope())
+{
+    var roleManager =
+        scope.ServiceProvider.GetRequiredService<RoleManager<IdentityRole>>();
+
+    var roles = new[] { "Admin", "Customer" };
+
+    foreach (var role in roles)
+    {
+
+        if (!await roleManager.RoleExistsAsync(role))
+            await roleManager.CreateAsync(new IdentityRole(role));
+
+    }
+}
+
+//seed admin
+
+using (var scope = app.Services.CreateScope())
+{
+    var userManager =
+        scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser>>();
+
+    string email = "1admin@admin.com";
+    string password = "Admin123!";
+
+    if (await userManager.FindByEmailAsync(email) == null)
+    {
+        var user = new IdentityUser();
+
+
+        user.UserName = email;
+        user.Email = email;
+
+        await userManager.CreateAsync(user, password);
+        await userManager.AddToRoleAsync(user, "Admin");
+
+    }
+} 
 app.Run();
