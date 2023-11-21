@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +11,7 @@ using MovieStore.Models;
 
 namespace MovieStore.Controllers
 {
+    [Authorize]
     public class MoviesController : Controller
     {
         private readonly MovieStoreContext _context;
@@ -24,7 +26,7 @@ namespace MovieStore.Controllers
         {
             return View(await _context.Movie.ToListAsync());
         }
-
+        [Authorize(Roles = "Admin")]
         // GET: Movies/Details/5
         public async Task<IActionResult> Details(int? id)
         {
@@ -42,13 +44,13 @@ namespace MovieStore.Controllers
 
             return View(movie);
         }
-
+        [Authorize(Roles = "Admin")]
         // GET: Movies/Create
         public IActionResult Create()
         {
             return View();
         }
-
+        [Authorize(Roles = "Admin")]
         // POST: Movies/Create
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -64,7 +66,7 @@ namespace MovieStore.Controllers
             }
             return View(movie);
         }
-
+        [Authorize(Roles = "Admin")]
         // GET: Movies/Edit/5
         public async Task<IActionResult> Edit(int? id)
         {
@@ -80,7 +82,7 @@ namespace MovieStore.Controllers
             }
             return View(movie);
         }
-
+        [Authorize(Roles = "Admin")]
         // POST: Movies/Edit/5
         // To protect from overposting attacks, enable the specific properties you want to bind to.
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
@@ -115,7 +117,7 @@ namespace MovieStore.Controllers
             }
             return View(movie);
         }
-
+        [Authorize(Roles = "Admin")]
         // GET: Movies/Delete/5
         public async Task<IActionResult> Delete(int? id)
         {
@@ -133,7 +135,7 @@ namespace MovieStore.Controllers
 
             return View(movie);
         }
-
+        [Authorize(Roles = "Admin")]
         // POST: Movies/Delete/5
         [HttpPost, ActionName("Delete")]
         [ValidateAntiForgeryToken]
